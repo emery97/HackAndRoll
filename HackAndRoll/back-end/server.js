@@ -7,16 +7,78 @@ const ClothingItem = require('./ClothingItem'); // Import your ClothingItem clas
 const app = express();
 const PORT = 3000;
 
+const FormData = require('form-data'); // For handling form data
+const fetch = require('node-fetch');
+
 const clothingImageRoutes = require('./ClothingImage');
+
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
+async function removeBg(base64Image) {
+  // Remove data URL prefix if present
+  const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
+  
+  // Convert Base64 to Buffer
+  const imageBuffer = Buffer.from(base64Data, 'base64');
+
+  // Prepare FormData
+  const form = new FormData();
+  form.append('size', 'auto');
+  form.append('image_file', imageBuffer, {
+    filename: 'image.png',
+    contentType: 'image/png',
+  });
+
+  // Send POST request to Remove.bg
+  const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+    method: 'POST',
+    headers: {
+      'X-Api-Key': 'EVDhwfcWygnRUKFvci5i7sDa',
+      ...form.getHeaders(),
+    },
+    body: form,
+  });
+
+  if (response.ok) {
+    const buffer = await response.buffer();
+    // Convert Buffer to Base64
+    return `data:image/png;base64,${buffer.toString('base64')}`;
+  } else {
+    const error = await response.text();
+    throw new Error(`Error ${response.status}: ${response.statusText} - ${error}`);
+  }
+}
+
+// POST Route to Remove Background
+app.post('/removebg', async (req, res) => {
+  try {
+
+    const { base64Image } = req.body;
+    if (!base64Image) {
+      return res.status(400).json({ error: 'base64Image is required' });
+    }
+
+    const resultBase64 = await removeBg(base64Image);
+    res.json({ image: resultBase64 });
+  } catch (error) {
+    console.error('Background removal error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 const mongoDbPassword = process.env.MONGODB;
 
 app.post('/image-clothing/save', clothingImageRoutes.saveClothingItem);
 app.get('/image-clothing/fetch', clothingImageRoutes.getClothingImage);
-
+app.get('/api/get-clothes', )
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
@@ -96,7 +158,6 @@ app.get('/api/nextday-temperature', async (req, res) => {
     }
 });
 
-
 // MongoDB Connection URI and Database/Collection Names
 const uri = "mongodb+srv://admin:adminpassword@hacknroll.lnosx.mongodb.net/?retryWrites=true&w=majority&appName=hacknroll";
 const dbName = 'chioset';
@@ -159,15 +220,26 @@ const addClothingItem = async (itemData) => {
   try {
     // Insert the new item into the closet collection
     const result = await closetCollection.insertOne(newItem);
+    console.log('Inserted new ClothingItem:', result.insertedId);
     return result;
   } catch (err) {
     throw err;
   }
 };
 
+app.get('/clothingitems', async (req, res) => {
+  try {
+    const items = await closetCollection.find().toArray();
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching clothing items:', error);
+    res.status(500).json({ error: 'Failed to fetch clothing items.' });
+  }
+});
+
 // Route: POST /api/clothingitems
 // Description: Adds a new ClothingItem to the MongoDB closet collection
-app.post('/api/clothingitems', async (req, res) => {
+app.post('/clothingitems', async (req, res) => {
   try {
     const itemData = req.body;
 

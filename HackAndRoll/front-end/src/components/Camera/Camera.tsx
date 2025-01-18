@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "../../css/camera.css";
 import fs from "node:fs";
+import axios from "axios";
 
 function Camera() {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,29 +59,68 @@ function Camera() {
         setHasPhoto(false);
     };
 
-    const downloadImage = () => {
+
+    
+    const downloadImage = async () => {
+        // Generate random clothing data
+        const id = Math.floor(Math.random() * 10000); // Generate a random ID
+        const type = ["Shirt", "Pants", "Dress", "Jacket", "Sweater"][Math.floor(Math.random() * 5)]; // Randomly pick a clothing type
+        const name = `${type} ${Math.random().toString(36).substring(2, 7)}`; // Random clothing name
+        const color = ["Red", "Blue", "Green", "Black", "White", "Gray"][Math.floor(Math.random() * 6)]; // Random color
+        const formal = Math.random() < 0.5; // 50% chance for formal or not
+        const temperatureRange = Math.random() < 0.5 ? "Cold" : "Warm"; // Random temperature range
+        const lastWorn = new Date().toISOString(); // Current date and time
+      
+        // Convert canvas to base64 image
         let photo = photoRef.current;
-
-        if (photo) {
-            // Convert canvas content to data URL
-            const dataURL = photo.toDataURL("image/png");
-
-            // Dynamically create the filename
-            const fileNumber = photoCount.toString().padStart(2, "0"); // e.g., 01, 02, etc.
-            const filename = `file${fileNumber}.png`;
-
-            // Create an anchor element and trigger download
-            const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Increment the photo count
-            setPhotoCount(photoCount + 1);
+        if (!photo) {
+          console.error("No photo available to upload.");
+          return;
         }
-    };
+      
+        const response = await axios.post('http://localhost:3000/removebg', {
+            base64Image: photo.toDataURL("image/png"),
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+        });
+        const imagebase64 = response.data.image;
+
+        // Prepare clothing item data
+        const clothingItem = {
+          id,
+          type,
+          name,
+          color,
+          formal,
+          temperatureRange,
+          lastWorn,
+          imagebase64,
+        };
+      
+        // Send the POST request to the backend
+        try {
+          const response = await axios.post("http://localhost:3000/clothingitems", clothingItem, {
+            headers: { "Content-Type": "application/json" },
+          });
+          console.log("Clothing item added successfully:", response.data);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Failed to add clothing item:", {
+                    message: error.message,
+                    response: error.response,  // Full response from the server (if available)
+                    status: error.response?.status,  // HTTP status code (if available)
+                    data: error.response?.data,  // Response data from the backend
+                    headers: error.response?.headers,  // Headers from the backend
+                });
+            } else {
+                console.error("Failed to add clothing item:", (error as Error).message);
+            }
+            
+        }
+      };
+      
 
     interface RemoveBgResponse {
         arrayBuffer: () => Promise<ArrayBuffer>;
