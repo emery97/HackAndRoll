@@ -150,7 +150,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <NavLink
                 to="/ootd"
                 className={`group relative flex items-center gap-2.5 rounded-md py-2 px-4 font-medium text-black duration-300 ease-in-out 
-                  ${pathname.includes('/all-history') ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'} 
+                  ${pathname.includes('/ootd') ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'} 
                   dark:text-white dark:hover:bg-primary`}
               >
                 <svg
