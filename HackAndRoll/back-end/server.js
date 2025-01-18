@@ -7,6 +7,8 @@ const ClothingItem = require('./ClothingItem'); // Import your ClothingItem clas
 const app = express();
 const PORT = 3000;
 
+const clothingImageRoutes = require('./ClothingImage');
+
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
 
@@ -37,6 +39,9 @@ app.post("/save-photo", (req, res) => {
 
 app.use("/clothes", express.static(path.join(__dirname, "public", "clothes")));
 
+
+app.post('/image-clothing/save', clothingImageRoutes.saveClothingItem);
+app.get('/image-clothing/fetch', clothingImageRoutes.getClothingImage);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
