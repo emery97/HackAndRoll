@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-
+import Camera from './components/Camera/Camera';
 import PageTitle from './components/PageTitle';
 import Sidebar from './components/Sidebar/index';
 import Header from './components/Header';
@@ -39,7 +39,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Scan Your Outfit | Chioset" />
-                      <Credits />
+                      <Camera />
                     </>
                   }
                 />
