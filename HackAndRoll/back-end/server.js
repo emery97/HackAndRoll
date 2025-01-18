@@ -9,6 +9,7 @@ const PORT = 3000;
 
 const clothingImageRoutes = require('./ClothingImage');
 
+
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
 app.use(
@@ -24,7 +25,7 @@ const mongoDbPassword = process.env.MONGODB;
 
 app.post('/image-clothing/save', clothingImageRoutes.saveClothingItem);
 app.get('/image-clothing/fetch', clothingImageRoutes.getClothingImage);
-
+app.get('/api/get-clothes', )
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
@@ -104,34 +105,6 @@ app.get('/api/nextday-temperature', async (req, res) => {
     }
 });
 
-// Define a Mongoose Schema and Model for clothing
-const clothingSchema = new mongoose.Schema({
-  id: String,
-  type: String,
-  name: String,
-  color: String,
-  formal: Boolean,
-  temperatureRange: String,
-  lastWorn: String,
-  imageBase64: String,
-});
-
-const Clothing = mongoose.model('Clothing', clothingSchema);
-
-// Define the API Endpoint
-app.get('/api/get-clothes', async (req, res) => {
-  try {
-    // Fetch clothing data from MongoDB
-    const clothingData = await Clothing.find(); // Fetches all documents in the "Clothing" collection
-
-    // Send the data as JSON
-    res.json(clothingData);
-  } catch (error) {
-    console.error('Error fetching clothes data:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 // MongoDB Connection URI and Database/Collection Names
 const uri = "mongodb+srv://admin:adminpassword@hacknroll.lnosx.mongodb.net/?retryWrites=true&w=majority&appName=hacknroll";
 const dbName = 'chioset';
@@ -200,6 +173,16 @@ const addClothingItem = async (itemData) => {
     throw err;
   }
 };
+
+app.get('/clothingitems', async (req, res) => {
+  try {
+    const items = await closetCollection.find().toArray();
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching clothing items:', error);
+    res.status(500).json({ error: 'Failed to fetch clothing items.' });
+  }
+});
 
 // Route: POST /api/clothingitems
 // Description: Adds a new ClothingItem to the MongoDB closet collection
