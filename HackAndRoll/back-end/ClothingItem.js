@@ -9,6 +9,7 @@ class ClothingItem {
       this.temperatureRange = temperatureRange; // { min: 15, max: 30 }
       this.lastWorn = lastWorn; // Date object or timestamp
       this.attributes = attributes; // Category-specific attributes
+      this.image = null; // Base64 image string
     }
   }
   

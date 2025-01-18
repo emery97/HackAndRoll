@@ -5,6 +5,7 @@ import PageTitle from './components/PageTitle';
 import Sidebar from './components/Sidebar/index';
 import Header from './components/Header';
 import Credits from './pages/Credits';
+import OOTD from './pages/OOTD';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,7 +58,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <Credits />
+                      <OOTD />
                     </>
                   }
                 />
