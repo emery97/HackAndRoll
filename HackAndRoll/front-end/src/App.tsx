@@ -6,7 +6,7 @@ import Sidebar from './components/Sidebar/index';
 import Header from './components/Header';
 import Credits from './pages/Credits';
 import OOTD from './pages/OOTD';
-import Closet from './components/Closet/yourcloset.tsx';
+import Closet from './components/Closet/yourCloset.tsx';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

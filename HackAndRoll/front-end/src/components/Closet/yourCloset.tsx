@@ -22,7 +22,7 @@ const Closet: React.FC = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/clothingitems');
+        const response = await axios.get('http://localhost:3000//api/get-clothes');
         setItems(response.data);
       } catch (error) {
         console.error('Error fetching clothing items:', error);
