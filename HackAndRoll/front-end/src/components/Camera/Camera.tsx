@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "../../css/camera.css";
 import fs from "node:fs";
+import { addClothingItem } from "../../../../back-end/uploadClothes"; 
 
 function Camera() {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,27 +59,40 @@ function Camera() {
         setHasPhoto(false);
     };
 
+    
     const downloadImage = () => {
+        const id = Math.floor(Math.random() * 10000);  // Generate a random ID
+        const type = ["Shirt", "Pants", "Dress", "Jacket", "Sweater"][Math.floor(Math.random() * 5)]; // Randomly pick a clothing type
+        const name = `${type} ${Math.random().toString(36).substring(2, 7)}`;  // Random clothing name like "Shirt abcde"
+        const color = ["Red", "Blue", "Green", "Black", "White", "Gray"][Math.floor(Math.random() * 6)]; // Random color
+        const formal = Math.random() < 0.5;  // 50% chance for formal or not
+        const temperatureRange = Math.random() < 0.5 ? "Cold" : "Warm";  // Random temperature range
+        const lastWorn = new Date().toISOString();  // Current date and time
+        const imagebase64 = `data:image/png;base64,${Math.random().toString(36).substring(2, 15)}`;  // Random base64 string (placeholder for actual image data)
+    
         let photo = photoRef.current;
 
         if (photo) {
-            // Convert canvas content to data URL
-            const dataURL = photo.toDataURL("image/png");
+            addClothingItem(id, type,name,color,formal,temperatureRange,lastWorn, photo.toDataURL("image/png"));
 
-            // Dynamically create the filename
-            const fileNumber = photoCount.toString().padStart(2, "0"); // e.g., 01, 02, etc.
-            const filename = `file${fileNumber}.png`;
 
-            // Create an anchor element and trigger download
-            const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // // Convert canvas content to data URL
+            // const dataURL = photo.toDataURL("image/png");
 
-            // Increment the photo count
-            setPhotoCount(photoCount + 1);
+            // // Dynamically create the filename
+            // const fileNumber = photoCount.toString().padStart(2, "0"); // e.g., 01, 02, etc.
+            // const filename = `file${fileNumber}.png`;
+
+            // // Create an anchor element and trigger download
+            // const link = document.createElement("a");
+            // link.href = dataURL;
+            // link.download = filename;
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+
+            // // Increment the photo count
+            // setPhotoCount(photoCount + 1);
         }
     };
 
