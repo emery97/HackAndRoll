@@ -18,12 +18,28 @@ interface ClothingItem {
 
 const Closet: React.FC = () => {
   const [items, setItems] = useState<ClothingItem[]>([]);
-
+  console.log('Items:', items);
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://localhost:3000//api/get-clothes');
-        setItems(response.data);
+        const response = await axios.get('http://localhost:3000/clothingitems');
+        //setItems(response.data);
+        const fetchedItems = response.data.map((item: any): ClothingItem => ({
+          _id: item._id,
+          id: item.id,
+          type: item.type,
+          name: item.name,
+          color: item.color,
+          formal: item.formal,
+          temperatureRange: item.temperatureRange,
+          lastWorn: item.lastWorn,
+          image: item.attributes,
+        }));
+        setItems(fetchedItems);
+
+        items.forEach(item => {
+          console.log('Item image:', item.image);
+        });
       } catch (error) {
         console.error('Error fetching clothing items:', error);
       }
@@ -35,11 +51,16 @@ const Closet: React.FC = () => {
     <div className="carousel-container">
       {items.map(item => (
         <div className="clothing-box" key={item._id}>
-          {item.image ? (
-            <img src={item.image} alt={item.name} className="clothing-image" />
-          ) : (
-            <div className="placeholder-image">No Image</div>
-          )}
+        {item.image ? (
+          <img 
+            src={`${item.image}`} 
+            alt={item.name} 
+            className="clothing-image" 
+          />
+        ) : (
+          <div className="placeholder-image">No Image</div>
+        )}
+
           <div className="clothing-details">
             <h3>{item.name}</h3>
             <p>Type: {item.type}</p>
