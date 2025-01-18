@@ -104,6 +104,33 @@ app.get('/api/nextday-temperature', async (req, res) => {
     }
 });
 
+// Define a Mongoose Schema and Model for clothing
+const clothingSchema = new mongoose.Schema({
+  id: String,
+  type: String,
+  name: String,
+  color: String,
+  formal: Boolean,
+  temperatureRange: String,
+  lastWorn: String,
+  imageBase64: String,
+});
+
+const Clothing = mongoose.model('Clothing', clothingSchema);
+
+// Define the API Endpoint
+app.get('/api/get-clothes', async (req, res) => {
+  try {
+    // Fetch clothing data from MongoDB
+    const clothingData = await Clothing.find(); // Fetches all documents in the "Clothing" collection
+
+    // Send the data as JSON
+    res.json(clothingData);
+  } catch (error) {
+    console.error('Error fetching clothes data:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // MongoDB Connection URI and Database/Collection Names
 const uri = "mongodb+srv://admin:adminpassword@hacknroll.lnosx.mongodb.net/?retryWrites=true&w=majority&appName=hacknroll";
