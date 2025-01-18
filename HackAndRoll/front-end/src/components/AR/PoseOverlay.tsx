@@ -3,7 +3,11 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl'; // Include this if you're using WebGL backend
 import * as tf from '@tensorflow/tfjs';
 
+import { usePose } from './PoseContext';
+
 const PoseOverlay: React.FC = () => {
+  // Add this line near other state declarations
+  const { setCurrentPose } = usePose();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
@@ -11,16 +15,20 @@ const PoseOverlay: React.FC = () => {
   // Setup pose detector
   useEffect(() => {
     const setupPoseDetector = async () => {
-      // Ensure TensorFlow.js is initialized
-      await tf.ready(); // Wait for TensorFlow.js to be ready
+      try {
+        await tf.ready(); // Wait for TensorFlow.js to be ready
+        console.log('TensorFlow.js is ready');
 
-      // Optionally, set a specific backend if webgpu causes issues
-      await tf.setBackend('webgl'); // Force using the webgl backend
+        await tf.setBackend('webgl'); // Force using the webgl backend
+        const model = poseDetection.SupportedModels.MoveNet;
+        const detectorConfig = { modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING };
+        const newDetector = await poseDetection.createDetector(model, detectorConfig);
+        setDetector(newDetector);
 
-      const model = poseDetection.SupportedModels.MoveNet;
-      const detectorConfig = { modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING };
-      const newDetector = await poseDetection.createDetector(model, detectorConfig);
-      setDetector(newDetector);
+        console.log('Pose detector created successfully');
+      } catch (error) {
+        console.error('Error setting up pose detector:', error);
+      }
     };
 
     setupPoseDetector();
@@ -37,17 +45,21 @@ const PoseOverlay: React.FC = () => {
       // Wait until the video is ready and has valid dimensions
       videoRef.current.onloadedmetadata = () => {
         if (videoRef.current && canvasRef.current) {
-          // Set canvas size to match video size
           canvasRef.current.width = videoRef.current.videoWidth;
           canvasRef.current.height = videoRef.current.videoHeight;
+          console.log('Video metadata loaded, canvas size set');
         }
       };
 
+       // Inside the detect function, add this line after poses are detected:
       const detect = async () => {
         const poses = await detector.estimatePoses(videoRef.current!);
+        setCurrentPose(poses[0]); // Share the first detected pose
         if (canvasRef.current) {
           ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         }
+
+        //console.log('Pose detected:', poses); // Log poses every time
 
         poses.forEach((pose) => {
           pose.keypoints.forEach((keypoint) => {
@@ -72,28 +84,23 @@ const PoseOverlay: React.FC = () => {
   // Access webcam
   useEffect(() => {
     const startVideo = async () => {
-      if (videoRef.current) {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoRef.current.srcObject = stream;
+      try {
+        if (videoRef.current) {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          videoRef.current.srcObject = stream;
+          console.log('Camera feed started');
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
       }
     };
     startVideo();
   }, []);
 
   return (
-    <div className="relative">
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="absolute inset-0 w-full h-full"
-        onLoadedMetadata={() => {
-          if (videoRef.current) {
-            videoRef.current.play();
-          }
-        }}
-      />
+    <div className="relative w-[1920] h-[1000]">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <video ref={videoRef} className="hidden" autoPlay />
     </div>
   );
 };

@@ -9,16 +9,17 @@ const CameraFeed: React.FC = () => {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          console.log('Camera feed started');
         }
       } catch (err) {
         console.error('Error accessing camera:', err);
       }
     };
-
+  
     setupCamera();
-  }, []);
+  }, []);  
 
-  return <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />;
+  return <video ref={videoRef} autoPlay playsInline className="w-[1920px] h-[1000px] object-cover" />;
 };
 
 export default CameraFeed;
