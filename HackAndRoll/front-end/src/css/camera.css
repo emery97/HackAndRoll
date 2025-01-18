@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+.cameraContainer {
+    height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.camera {
+    position: relative;
+    width: 100%; 
+    max-width: 100%; /* Max width for the video */
+    height: auto; /* Adjust height automatically */
+}
+
+video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* Optional: Rounded corners */
+}
+
+.camera button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    background-image: linear-gradient(to right, #ff105f, #ffad06);
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-position 0.3s ease;
+}
+
+.camera button:hover {
+    background-position: 100%;
+}
+
+.result {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Width of the result container */
+    max-width: 1000px; /* Max width */
+    height: 70%; /* Height of the result container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent dark background */
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction when not visible */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* When a photo is taken, the result appears */
+.result.hasPhoto {
+    opacity: 1;
+    pointer-events: auto; /* Allow interaction */
+    transform: translate(-50%, -50%) scale(1.05); /* Slight zoom effect */
+}
+
+.button-container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap:30px;
+}
+
+/* Canvas styling */
+canvas {
+    width: 100%;
+    max-width: 600px; /* Limit canvas size */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Close button inside the result section */
+.result button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background-color: #ff105f;
+    color: white;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.result button:hover {
+    background-color: #ffad06;
+}
