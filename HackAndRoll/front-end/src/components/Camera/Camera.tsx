@@ -1,4 +1,5 @@
 import React, {useRef,useEffect, useState} from "react";
+import  "../../css/camera.css";
 function Camera(){
     const videoRef = useRef(null);
     const photoRef = useRef(null);
@@ -12,8 +13,10 @@ function Camera(){
         })
         .then(stream=>{
             let video = videoRef.current;
-            video.srcObject = stream;
-            video.play();
+            if(video){
+                video.srcObject = stream;
+                video.play();
+            }
         })
         .catch(err=>{
             console.error("OH NO!", err);
@@ -25,15 +28,15 @@ function Camera(){
     }, [videoRef]);
     
     return (
-        <div className="camera-Container">
+        <div className="cameraContainer">
             <div className="camera">
-            <video ref={videoRef}></video>
-                <button>SNAP!</button>
-            </div>
-            <div className={'result' + (hasPhoto ? 'hasPhoto':'')}>
-                <canvas ref={photoRef}></canvas>
-                <button>CLOSE!</button>
-            </div>
+                <video ref={videoRef}></video>
+                    <button>SNAP!</button>
+                </div>
+                <div className={'result' + (hasPhoto ? 'hasPhoto':'')}>
+                    <canvas ref={photoRef}></canvas>
+                    <button>CLOSE!</button>
+                </div>
         </div>
     )
 }

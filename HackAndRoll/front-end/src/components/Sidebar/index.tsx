@@ -95,10 +95,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           {/* <!-- Menu Group --> */}
           <div>
             <ul className="mb-6 flex flex-col gap-3">
-              {/* <!-- Menu Item Scan your clothes --> */}
+              {/* <!-- Menu Item Scan your outfit --> */}
               <li>
               <NavLink
-                to="/scan-your-clothes"
+                to="/scan-your-outfit"
                 className={`group relative flex items-center gap-2.5 rounded-md py-2 px-4 font-medium text-black duration-300 ease-in-out 
                   ${pathname.includes('/scan-your-clothes') ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'} 
                   dark:text-white dark:hover:bg-primary`}
