@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const ClothingItem = require('./ClothingItem'); // Assuming ClothingItem is a valid model
 
-const uri = "mongodb+srv://brayzsg:Z3EbpLzSxY9jj8qM@hacknroll.lnosx.mongodb.net/?retryWrites=true&w=majority&appName=hacknroll";
+const uri = "mongodb+srv://admin:adminpassword@hacknroll.lnosx.mongodb.net/?retryWrites=true&w=majority&appName=hacknroll";
 
 // Fetch clothing image
 const getClothingImage = async (req, res) => {

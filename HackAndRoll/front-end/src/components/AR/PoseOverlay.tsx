@@ -58,8 +58,6 @@ const PoseOverlay: React.FC = () => {
               ctx.fill();
             }
           });
-
-          console.log(pose.keypoints);
         });
 
         requestAnimationFrame(detect);
