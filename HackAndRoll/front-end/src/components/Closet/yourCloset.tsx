@@ -18,7 +18,6 @@ interface ClothingItem {
 
 const Closet: React.FC = () => {
   const [items, setItems] = useState<ClothingItem[]>([]);
-  console.log('Items:', items);
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -37,9 +36,6 @@ const Closet: React.FC = () => {
         }));
         setItems(fetchedItems);
 
-        items.forEach(item => {
-          console.log('Item image:', item.image);
-        });
       } catch (error) {
         console.error('Error fetching clothing items:', error);
       }
