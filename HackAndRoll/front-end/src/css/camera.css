@@ -71,6 +71,13 @@ video {
     transform: translate(-50%, -50%) scale(1.05); /* Slight zoom effect */
 }
 
+.button-container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap:30px;
+}
+
 /* Canvas styling */
 canvas {
     width: 100%;
