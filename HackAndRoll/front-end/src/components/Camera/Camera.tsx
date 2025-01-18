@@ -59,6 +59,7 @@ function Camera() {
         setHasPhoto(false);
     };
 
+
     
     const downloadImage = async () => {
         // Generate random clothing data
@@ -77,7 +78,14 @@ function Camera() {
           return;
         }
       
-        const imagebase64 = photo.toDataURL("image/png");
+        const response = await axios.post('http://localhost:3000/removebg', {
+            base64Image: photo.toDataURL("image/png"),
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+        });
+        const imagebase64 = response.data.image;
 
         // Prepare clothing item data
         const clothingItem = {
