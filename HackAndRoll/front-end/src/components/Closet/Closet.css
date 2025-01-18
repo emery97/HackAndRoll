@@ -1,0 +1,48 @@
+/* src/YourCloset.css */
+
+.carousel-container {
+    display: flex;
+    overflow-x: scroll;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .clothing-box {
+    min-width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fafafa;
+  }
+  
+  .clothing-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .placeholder-image {
+    width: 100%;
+    height: 150px;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #555;
+  }
+  
+  .clothing-details {
+    margin-top: 10px;
+  }
+  
+  .clothing-details h3 {
+    margin: 0 0 5px 0;
+  }
+  
+  .clothing-details p {
+    margin: 2px 0;
+    font-size: 14px;
+  }
+  
