@@ -11,6 +11,14 @@ const clothingImageRoutes = require('./ClothingImage');
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
 
 const mongoDbPassword = process.env.MONGODB;
 
@@ -159,6 +167,7 @@ const addClothingItem = async (itemData) => {
   try {
     // Insert the new item into the closet collection
     const result = await closetCollection.insertOne(newItem);
+    console.log('Inserted new ClothingItem:', result.insertedId);
     return result;
   } catch (err) {
     throw err;
@@ -167,7 +176,7 @@ const addClothingItem = async (itemData) => {
 
 // Route: POST /api/clothingitems
 // Description: Adds a new ClothingItem to the MongoDB closet collection
-app.post('/api/clothingitems', async (req, res) => {
+app.post('/clothingitems', async (req, res) => {
   try {
     const itemData = req.body;
 
