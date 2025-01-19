@@ -33,7 +33,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Credits | Chioset" />
-                      <Credits />
+                      <Credits key={window.location.pathname} />
                     </>
                   }
                 />
@@ -42,7 +42,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Scan Your Outfit | Chioset" />
-                      <Camera />
+                      <Camera key={window.location.pathname} />
                     </>
                   }
                 />
@@ -51,7 +51,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Your Closet | Chioset" />
-                      <Closet />
+                      <Closet key={window.location.pathname} />
                     </>
                   }
                 />
@@ -60,7 +60,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <Weather />
+                      <Weather key={window.location.pathname} />
                     </>
                   }
                 />
@@ -69,7 +69,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <OOTD />
+                      <OOTD key={window.location.pathname} />
                     </>
                   }
                 />
@@ -81,5 +81,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
