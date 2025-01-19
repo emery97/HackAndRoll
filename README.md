@@ -1,4 +1,4 @@
-# Hack&Roll
+# Hack&Roll 2024
 ![Chioset Logo](https://github.com/emery97/HackAndRoll/blob/main/HackAndRoll/front-end/logo.png)
 Chioset is a full-stack application designed to help users make quick, informed outfit decisions. By integrating weather data, wardrobe management, and Augmented Reality (AR), Chioset offers a fun and interactive way to choose outfits based on real-time conditions and personal style.
 
