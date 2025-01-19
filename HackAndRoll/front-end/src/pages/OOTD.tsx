@@ -5,6 +5,7 @@ import ClothingOverlay from '../components/AR/ClothingOverlay';
 import { PoseProvider } from '../components/AR/PoseContext';
 import { useParams } from 'react-router-dom';
 
+
 const OOTD: React.FC = () => {
 
   const [clothingImage, setClothingImage] = useState<string | null>(null); // Base64 string for clothing image

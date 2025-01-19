@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar/index';
 import Header from './components/Header';
 import Credits from './pages/Credits';
 import OOTD from './pages/OOTD';
+import Weather from './pages/Weather';
 import Closet from './components/Closet/yourCloset.tsx';
 
 function App() {
@@ -32,7 +33,16 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Credits | Chioset" />
-                      <Credits />
+                      <Credits key={window.location.pathname} />
+                    </>
+                  }
+                />
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <PageTitle title="Scan Your Outfit | Chioset" />
+                      <Camera key={window.location.pathname} />
                     </>
                   }
                 />
@@ -41,7 +51,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Scan Your Outfit | Chioset" />
-                      <Camera />
+                      <Camera key={window.location.pathname} />
                     </>
                   }
                 />
@@ -50,7 +60,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Your Closet | Chioset" />
-                      <Closet />
+                      <Closet key={window.location.pathname} />
                     </>
                   }
                 />
@@ -59,7 +69,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <OOTD />
+                      <Weather key={window.location.pathname} />
                     </>
                   }
                 />
@@ -68,7 +78,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <OOTD />
+                      <OOTD key={window.location.pathname} />
                     </>
                   }
                 />
@@ -80,5 +90,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
