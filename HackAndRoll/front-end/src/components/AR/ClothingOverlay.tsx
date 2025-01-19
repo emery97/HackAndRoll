@@ -58,12 +58,9 @@ const ClothingOverlay: React.FC = () => {
       if (torso && torso.score > 0.5 && clothingImage) {
         //img.src = `data:image/png;base64,${clothingImage}`;
         const base64String = clothingImage;
-        
+
         const img = new Image();
         img.src = base64String;
-
-        // append the image onto the dom
-
 
         // img.onload = () => {
           console.log('Clothing image loaded, drawing it on canvas');
