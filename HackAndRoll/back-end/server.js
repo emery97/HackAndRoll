@@ -237,6 +237,19 @@ app.get('/clothingitems', async (req, res) => {
   }
 });
 
+app.get('/gemini', async (req, res) => {
+  const { GoogleGenerativeAI } = require("@google/generative-ai");
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+  console.log(genAI);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
+  const prompt = "Explain how AI works";
+  
+  const result = await model.generateContent(prompt);
+  console.log(result.response.text());
+  res.json(result.response.text());
+});
+
 // Route: POST /api/clothingitems
 // Description: Adds a new ClothingItem to the MongoDB closet collection
 app.post('/clothingitems', async (req, res) => {
