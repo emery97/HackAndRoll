@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Closet.css'; // Create and style as needed
+import OOTD from './Ootd.tsx';
 
 interface ClothingItem {
   _id: string;
@@ -17,6 +18,27 @@ interface ClothingItem {
 }
 
 const Closet: React.FC = () => {
+
+interface Temperature {
+    low: number;
+    high: number;
+}   
+
+const [temperature, setTemperature] = useState<Temperature | null>(null);
+  
+  const fetchTemperature = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/nextday-temperature');
+      const tempData: Temperature = {
+        low: response.data.temperature.low,
+        high: response.data.temperature.high,
+      };
+      setTemperature(tempData);
+    } catch (error) {
+      console.error('Error fetching temperature data:', error);
+    }
+  };
+
   const [items, setItems] = useState<ClothingItem[]>([]);
   useEffect(() => {
     const fetchItems = async () => {
@@ -40,11 +62,14 @@ const Closet: React.FC = () => {
         console.error('Error fetching clothing items:', error);
       }
     };
+    fetchTemperature();
+
     fetchItems();
   }, []);
 
   return (
-    <div className="carousel-container">
+    <div>
+      <div className="carousel-container">
       {items.map(item => (
         <div className="clothing-box" key={item._id}>
         {item.image ? (
@@ -67,6 +92,7 @@ const Closet: React.FC = () => {
           </div>
         </div>
       ))}
+    </div>
     </div>
   );
 };
