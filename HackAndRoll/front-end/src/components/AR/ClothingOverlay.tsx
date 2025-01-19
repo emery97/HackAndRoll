@@ -113,9 +113,9 @@ const ClothingOverlay: React.FC = () => {
     }
   }, [currentPose, clothingImage]);
   
-  console.log('Detected Keypoints:', currentPose?.keypoints);
-  console.log('Current Pose:', currentPose);
-  console.log('Clothing Image Base64:', clothingImage);
+  // console.log('Detected Keypoints:', currentPose?.keypoints);
+  // console.log('Current Pose:', currentPose);
+  // console.log('Clothing Image Base64:', clothingImage);
   
 
   return (

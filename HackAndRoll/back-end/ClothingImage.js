@@ -11,9 +11,8 @@ const getClothingImage = async (req, res) => {
     const database = client.db('chioset');
     const collection = database.collection('closet');
     const image = await collection.findOne({});
-    
     if (image) {
-      res.json({ image: image.image.toString('base64') });
+      res.json({ image: image.attributes.toString('base64') });
     } else {
       return res.status(404).json({ message: 'Clothing image not found' });
     }

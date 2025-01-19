@@ -3,15 +3,19 @@ const cors = require('cors');
 const axios = require('axios');
 const { MongoClient, GridFSBucket } = require('mongodb');
 const ClothingItem = require('./ClothingItem'); // Import your ClothingItem class
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
 
 const FormData = require('form-data'); // For handling form data
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
+// Dynamic Import for node-fetch
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 
 const clothingImageRoutes = require('./ClothingImage');
-
+const geminiRoutes = require('./Gemini');
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
@@ -22,6 +26,7 @@ app.use(
     allowedHeaders: ["Content-Type"],
   })
 );
+
 
 async function removeBg(base64Image) {
   // Remove data URL prefix if present
@@ -76,6 +81,7 @@ app.post('/removebg', async (req, res) => {
 });
 const mongoDbPassword = process.env.MONGODB;
 
+app.post('/gemini', geminiRoutes.getGemini);
 app.post('/image-clothing/save', clothingImageRoutes.saveClothingItem);
 app.get('/image-clothing/fetch', clothingImageRoutes.getClothingImage);
 app.get('/api/get-clothes', )
@@ -237,18 +243,6 @@ app.get('/clothingitems', async (req, res) => {
   }
 });
 
-app.get('/gemini', async (req, res) => {
-  const { GoogleGenerativeAI } = require("@google/generative-ai");
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-  console.log(genAI);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  
-  const prompt = "Explain how AI works";
-  
-  const result = await model.generateContent(prompt);
-  console.log(result.response.text());
-  res.json(result.response.text());
-});
 
 // Route: POST /api/clothingitems
 // Description: Adds a new ClothingItem to the MongoDB closet collection
