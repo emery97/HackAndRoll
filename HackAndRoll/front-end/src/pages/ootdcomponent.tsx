@@ -50,7 +50,7 @@ const OOTDCOMPONENT: React.FC<OOTDProps> = ({ items, temperature }) => {
     <div style={styles.container}>
       <div>
         <h2>Temperature High: {temperature?.high}</h2>
-        <h2>Temperature High: {temperature?.low}</h2>
+        <h2>Temperature Low: {temperature?.low}</h2>
       </div>
       <h2>Outfit Of The Day</h2>
       <div style={styles.grid}>
