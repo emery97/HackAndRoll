@@ -99,7 +99,7 @@ const getTomorrowDate = () => {
     const day = String(tomorrow.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
-};
+}
   
   /**
    * Route: GET /api/nextday-temperature
@@ -240,6 +240,21 @@ app.get('/clothingitems', async (req, res) => {
   } catch (error) {
     console.error('Error fetching clothing items:', error);
     res.status(500).json({ error: 'Failed to fetch clothing items.' });
+  }
+});
+
+app.get('/clothingitems/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const clothingItem = await closetCollection.findOne({ id: parseInt(id) });    
+    if (!clothingItem) {
+      return res.status(404).json({ error: 'Clothing item not found' });
+    }
+    
+    res.json(clothingItem);
+  } catch (error) {
+    console.error('Error fetching clothing item:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
