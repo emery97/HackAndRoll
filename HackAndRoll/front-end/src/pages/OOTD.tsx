@@ -43,14 +43,13 @@ setClothingImage("data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAAD
   useEffect(() => {
   // Fetch data from the /gemini route
   const fetchAIResponse = async () => {
-    console.log(setClothingImage);
     try {
       const response = await fetch('http://localhost:3000/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ image: setClothingImage }), // Send base64 image data
+        body: JSON.stringify({ image: clothingImage }), // Send base64 image data
       });
       const data = await response.json();
       setAiResponse(data); // Assuming the backend sends the response as plain text
