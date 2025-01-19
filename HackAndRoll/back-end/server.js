@@ -4,7 +4,7 @@ const axios = require('axios');
 const { MongoClient, GridFSBucket } = require('mongodb');
 const ClothingItem = require('./ClothingItem'); // Import your ClothingItem class
 require('dotenv').config();
-
+const fileupload  = require('express-fileupload');
 const app = express();
 const PORT = 3000;
 
@@ -18,6 +18,7 @@ const clothingImageRoutes = require('./ClothingImage');
 const geminiRoutes = require('./Gemini');
 
 app.use(cors());
+app.use(fileupload());
 app.use(express.json({ limit: "50mb" })); // To handle base64 images
 app.use(
   cors({

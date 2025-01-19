@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import "../../css/camera.css";
-import fs from "node:fs";
 import axios from "axios";
 
 function Camera() {
@@ -8,7 +7,7 @@ function Camera() {
     const photoRef = useRef<HTMLCanvasElement>(null);
 
     const [hasPhoto, setHasPhoto] = useState(false);
-    const [photoCount, setPhotoCount] = useState(1); // Counter for dynamic filenames
+    const [aiResponse, setAiResponse] = useState<string | null>(null);
 
     const getVideo = () => {
         navigator.mediaDevices
@@ -59,96 +58,102 @@ function Camera() {
         setHasPhoto(false);
     };
 
-
-    
     const downloadImage = async () => {
-        // Generate random clothing data
-        const id = Math.floor(Math.random() * 10000); // Generate a random ID
-        const type = ["Shirt", "Pants", "Dress", "Jacket", "Sweater"][Math.floor(Math.random() * 5)]; // Randomly pick a clothing type
-        const name = `${type} ${Math.random().toString(36).substring(2, 7)}`; // Random clothing name
-        const color = ["Red", "Blue", "Green", "Black", "White", "Gray"][Math.floor(Math.random() * 6)]; // Random color
-        const formal = Math.random() < 0.5; // 50% chance for formal or not
-        const temperatureRange = Math.random() < 0.5 ? "Cold" : "Warm"; // Random temperature range
-        const lastWorn = new Date().toISOString(); // Current date and time
-      
-        // Convert canvas to base64 image
         let photo = photoRef.current;
         if (!photo) {
-          console.error("No photo available to upload.");
-          return;
+            console.error("No photo available to upload.");
+            return;
         }
-      
-        const response = await axios.post('http://localhost:3000/removebg', {
-            base64Image: photo.toDataURL("image/png"),
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-        });
-        const imagebase64 = response.data.image;
-
-        // Prepare clothing item data
-        const clothingItem = {
-          id,
-          type,
-          name,
-          color,
-          formal,
-          temperatureRange,
-          lastWorn,
-          imagebase64,
-        };
-      
-        // Send the POST request to the backend
+    
+        // Step 1: Convert canvas to base64 and send it to the backend to remove the background
+        const base64Image = photo.toDataURL("image/png");
+    
         try {
-          const response = await axios.post("http://localhost:3000/clothingitems", clothingItem, {
-            headers: { "Content-Type": "application/json" },
-          });
-          console.log("Clothing item added successfully:", response.data);
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Failed to add clothing item:", {
-                    message: error.message,
-                    response: error.response,  // Full response from the server (if available)
-                    status: error.response?.status,  // HTTP status code (if available)
-                    data: error.response?.data,  // Response data from the backend
-                    headers: error.response?.headers,  // Headers from the backend
-                });
-            } else {
-                console.error("Failed to add clothing item:", (error as Error).message);
+            // Send the base64 image to the backend for background removal
+            const response = await axios.post('http://localhost:3000/removebg', {
+                base64Image: base64Image,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            const imagebase64 = response.data.image; // Assuming the backend returns a base64 image
+    
+            if (!imagebase64) {
+                console.error("No image returned after background removal.");
+                return;
             }
-            
+    
+            // Step 2: Convert the base64 image to a Blob
+            const byteCharacters = atob(imagebase64.split(',')[1]); // Strip the 'data:image/png;base64,' part
+            const byteArrays = [];
+
+            for (let offset = 0; offset < byteCharacters.length; offset++) {
+                const byteArray = byteCharacters.charCodeAt(offset);
+                byteArrays.push(byteArray);
+            }
+    
+            const byteArray = new Uint8Array(byteArrays);
+            const blob = new Blob([byteArray], { type: "image/png" });
+    
+            // Step 3: Prepare FormData to send the image as a file
+            const formData = new FormData();
+            formData.append("image", blob, "clothing-image.png");
+    
+            try {
+                // Step 4: Send the image Blob to Gemini via a POST request
+                const geminiResponse = await axios.post("http://localhost:3000/gemini", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+    
+                if (geminiResponse.status === 200) {
+                    console.log("Gemini response:", geminiResponse.data);
+                    // Handle the response from Gemini
+                }
+            } catch (error) {
+                console.error("Error sending image to Gemini:", error);
+            }
+        } catch (error) {
+            console.error("Error removing background:", error);
         }
-      };
+    };
+    
       
 
     interface RemoveBgResponse {
         arrayBuffer: () => Promise<ArrayBuffer>;
     }
 
-    const removeBg = async (blob: Blob): Promise<ArrayBuffer> => {
-        try {
-            const formData = new FormData();
-            formData.append("size", "auto");
-            formData.append("image_file", blob);
+    // const removeBg = async (blob: Blob): Promise<ArrayBuffer> => {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append("image", blob, "clothing-image.png");
+ 
+    //         try {
+    //             // Send the Blob as a File to the backend
+    //             const response = await axios.post("http://localhost:3000/gemini", formData, {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             });
 
-            const response: Response = await fetch("https://api.remove.bg/v1.0/removebg", {
-                method: "POST",
-                headers: { "X-Api-Key": process.env.BGREMOVER || "" },  // Use process.env to access environment variables
-                body: formData,
-            });
+    //             if (response.status === 200) {
+    //                 console.log("Gemini response:", response.data);
+    //                 // Handle the response from Gemini
+    //             }
+    //         } catch (error) {
+    //             console.error("Error sending image to Gemini:", error);
+    //         }
+    //     }, "image/png");
+    // };
 
-            if (response.ok) {
-                return await response.arrayBuffer();  // Returns the image data as ArrayBuffer
-            } else {
-                throw new Error(`${response.status}: ${response.statusText}`);
-            }
-        } catch (error) {
-            console.error("Error removing background:", error);
-            throw error;  // Re-throwing the error so it can be handled by the caller
-        }
-    };
-    
+    useEffect(() => {
+        getVideo();
+    }, [videoRef]);
+
 
     useEffect(() => {
         getVideo();

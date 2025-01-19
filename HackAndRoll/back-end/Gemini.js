@@ -1,32 +1,51 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require('dotenv').config();
+const axios = require("axios");
+const FormData = require("form-data");
+const fs = require("fs");
+const multer = require("multer");
 
+// Setup Multer for file upload handling
+const upload = multer({ dest: "uploads/" }); // This will store uploaded files in the 'uploads' folder
+
+// Your function to handle the request and send it to Gemini
 const getGemini = async (req, res) => {
-    try {
-        // Extract base64 image from the request body
-        const { image } = req.body;
+    console.log("Received file:", req.files.image);
 
-        if (!image) {
-            return res.status(400).json({ error: 'Base64 image data is required' });
+    try {
+        // Check if file was uploaded
+        if (!req.file) {
+            return res.status(400).json({ error: "Image file is required" });
         }
 
+        const filePath = req.file.path;
+        const fileBuffer = fs.readFileSync(filePath);
 
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        
+        const formData = new FormData();
+        formData.append("file", fileBuffer, req.files.image.data); // Add the file to FormData
 
-        console.log(`\n\n\n\n\n\n ${image} \n\n\n\n\n\n`);
-        // Construct your prompt (or modify based on the received base64)
-        const prompt = `Analyze the content of the provided image it is in base64 ${image}...`;
+        // Send the file to Gemini API
+        const response = await axios.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAeHcJaKcYl7tz6YllL2axOB3SzGklIzZE",
+            formData,
+            {
+              headers: {
+                ...formData.getHeaders(), // Get the proper headers for the form data
+              },
+            }
+          );
 
-        const result = await model.generateContent(prompt);
+        // Clean up the uploaded file after processing
+        fs.unlinkSync(filePath); 
 
-        return res.json({ response: result.response.text() });
+        // Send response back to client
+        res.json({ response: response.data });
     } catch (error) {
-        console.error('Error connecting to gemini:', error);
-        return res.status(500).json({ error: 'Server error' });
+        console.error("Error uploading file:", error);
+        res.status(500).json({ error: "Server error" });
     }
 };
 
+// Route to handle file upload
+const uploadFileHandler = upload.single("image"); // "image" is the name of the form field
 
-
-module.exports = { getGemini }; 
+module.exports = { getGemini, uploadFileHandler };
