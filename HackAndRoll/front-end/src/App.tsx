@@ -38,6 +38,15 @@ function App() {
                   }
                 />
                 <Route
+                  path="/"
+                  element={
+                    <>
+                      <PageTitle title="Scan Your Outfit | Chioset" />
+                      <Camera key={window.location.pathname} />
+                    </>
+                  }
+                />
+                <Route
                   path="/scan-your-outfit"
                   element={
                     <>
