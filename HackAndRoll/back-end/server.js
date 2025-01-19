@@ -7,6 +7,9 @@ const ClothingItem = require('./ClothingItem'); // Import your ClothingItem clas
 const app = express();
 const PORT = 3000;
 
+const FormData = require('form-data'); // For handling form data
+const fetch = require('node-fetch');
+
 const clothingImageRoutes = require('./ClothingImage');
 
 
@@ -20,7 +23,57 @@ app.use(
   })
 );
 
+async function removeBg(base64Image) {
+  // Remove data URL prefix if present
+  const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
+  
+  // Convert Base64 to Buffer
+  const imageBuffer = Buffer.from(base64Data, 'base64');
 
+  // Prepare FormData
+  const form = new FormData();
+  form.append('size', 'auto');
+  form.append('image_file', imageBuffer, {
+    filename: 'image.png',
+    contentType: 'image/png',
+  });
+
+  // Send POST request to Remove.bg
+  const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+    method: 'POST',
+    headers: {
+      'X-Api-Key': 'EVDhwfcWygnRUKFvci5i7sDa',
+      ...form.getHeaders(),
+    },
+    body: form,
+  });
+
+  if (response.ok) {
+    const buffer = await response.buffer();
+    // Convert Buffer to Base64
+    return `data:image/png;base64,${buffer.toString('base64')}`;
+  } else {
+    const error = await response.text();
+    throw new Error(`Error ${response.status}: ${response.statusText} - ${error}`);
+  }
+}
+
+// POST Route to Remove Background
+app.post('/removebg', async (req, res) => {
+  try {
+
+    const { base64Image } = req.body;
+    if (!base64Image) {
+      return res.status(400).json({ error: 'base64Image is required' });
+    }
+
+    const resultBase64 = await removeBg(base64Image);
+    res.json({ image: resultBase64 });
+  } catch (error) {
+    console.error('Background removal error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 const mongoDbPassword = process.env.MONGODB;
 
 app.post('/image-clothing/save', clothingImageRoutes.saveClothingItem);
