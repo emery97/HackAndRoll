@@ -1,8 +1,8 @@
-// src/Closet.tsx
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Closet.css'; // Create and style as needed
+import OOTDCOMPONENT from './ootdcomponent';
+
 
 interface ClothingItem {
   _id: string;
@@ -16,7 +16,7 @@ interface ClothingItem {
   image: string;
 }
 
-const Closet: React.FC = () => {
+const Weather: React.FC = () => {
 
 interface Temperature {
     low: number;
@@ -68,33 +68,9 @@ const [temperature, setTemperature] = useState<Temperature | null>(null);
 
   return (
     <div>
-      <div className="carousel-container">
-      {items.map(item => (
-        <div className="clothing-box" key={item._id} onClick={() => window.location.href = `/ootd/${item.id}`}>
-          {item.image ? (
-            <img 
-              src={`${item.image}`} 
-              alt={item.name} 
-              className="clothing-image" 
-            />
-          ) : (
-            <div className="placeholder-image">No Image</div>
-          )}
-
-          <div className="clothing-details">
-            <h3>{item.name}</h3>
-            <p>Type: {item.type}</p>
-            <p>Color: {item.color}</p>
-            <p>Formal: {item.formal.toString()}</p>
-            <p>Temp Range: {typeof item.temperatureRange === 'string' ? item.temperatureRange : `${item.temperatureRange.min}-${item.temperatureRange.max}`}</p>
-            <p>Last Worn: {new Date(item.lastWorn).toLocaleDateString()}</p>
-          </div>
-        </div>
-
-      ))}  
-    </div>
+        <OOTDCOMPONENT items={items} temperature={temperature} />
     </div>
   );
 };
 
-export default Closet;
+export default Weather;
