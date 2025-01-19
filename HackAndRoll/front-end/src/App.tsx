@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar/index';
 import Header from './components/Header';
 import Credits from './pages/Credits';
 import OOTD from './pages/OOTD';
+import Weather from './pages/Weather';
 import Closet from './components/Closet/yourCloset.tsx';
 
 function App() {
@@ -59,7 +60,7 @@ function App() {
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
-                      <OOTD />
+                      <Weather />
                     </>
                   }
                 />

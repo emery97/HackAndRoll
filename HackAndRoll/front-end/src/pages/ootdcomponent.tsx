@@ -23,7 +23,7 @@ interface OOTDProps {
   temperature: Temperature | null;
 }
 
-const OOTD: React.FC<OOTDProps> = ({ items, temperature }) => {
+const OOTDCOMPONENT: React.FC<OOTDProps> = ({ items, temperature }) => {
   
   
 
@@ -127,4 +127,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default OOTD;
+export default OOTDCOMPONENT;
