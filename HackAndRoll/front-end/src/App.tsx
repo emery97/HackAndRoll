@@ -55,7 +55,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/ootd"
+                  path="/ootd/:id"
                   element={
                     <>
                       <PageTitle title="Outfit Of The Day | Chioset" />
