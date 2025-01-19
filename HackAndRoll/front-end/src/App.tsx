@@ -63,6 +63,15 @@ function App() {
                     </>
                   }
                 />
+                <Route
+                  path="/ootd/:id"
+                  element={
+                    <>
+                      <PageTitle title="Outfit Of The Day | Chioset" />
+                      <OOTD />
+                    </>
+                  }
+                />
               </Routes>
             </div>
           </main>

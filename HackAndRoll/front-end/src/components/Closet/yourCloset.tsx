@@ -71,16 +71,16 @@ const [temperature, setTemperature] = useState<Temperature | null>(null);
     <div>
       <div className="carousel-container">
       {items.map(item => (
-        <div className="clothing-box" key={item._id}>
-        {item.image ? (
-          <img 
-            src={`${item.image}`} 
-            alt={item.name} 
-            className="clothing-image" 
-          />
-        ) : (
-          <div className="placeholder-image">No Image</div>
-        )}
+        <div className="clothing-box" key={item._id} onClick={() => window.location.href = `/ootd/${item.id}`}>
+          {item.image ? (
+            <img 
+              src={`${item.image}`} 
+              alt={item.name} 
+              className="clothing-image" 
+            />
+          ) : (
+            <div className="placeholder-image">No Image</div>
+          )}
 
           <div className="clothing-details">
             <h3>{item.name}</h3>
@@ -91,7 +91,8 @@ const [temperature, setTemperature] = useState<Temperature | null>(null);
             <p>Last Worn: {new Date(item.lastWorn).toLocaleDateString()}</p>
           </div>
         </div>
-      ))}
+
+      ))}  
     </div>
     </div>
   );
